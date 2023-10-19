@@ -160,6 +160,9 @@ export function TextStoryCreator({
   const [colorPickerPopperRef, setColorPickerPopperRef] =
     useState<HTMLDivElement | null>(null);
 
+  const [isEditingTextButtonRef, setIsEditingTextButtonRef] =
+    useState<HTMLButtonElement | null>(null);
+
   const colorPickerPopper = usePopper(
     colorPickerPopperButtonRef,
     colorPickerPopperRef,
@@ -286,20 +289,37 @@ export function TextStoryCreator({
   ]);
 
   useEffect(() => {
-    if (!isColorPickerShowing) {
+    if (!isColorPickerShowing && !isEditingText && !isLinkPreviewInputShowing) {
       return noop;
     }
     return handleOutsideClick(
       () => {
         setIsColorPickerShowing(false);
+        setIsEditingText(false);
+        setIsLinkPreviewInputShowing(false);
         return true;
       },
       {
-        containerElements: [colorPickerPopperRef, colorPickerPopperButtonRef],
+        containerElements: [
+          colorPickerPopperRef,
+          colorPickerPopperButtonRef,
+          linkPreviewInputPopperRef,
+          linkPreviewInputPopperButtonRef,
+          isEditingTextButtonRef,
+        ],
         name: 'TextStoryCreator.colorPicker',
       }
     );
-  }, [isColorPickerShowing, colorPickerPopperRef, colorPickerPopperButtonRef]);
+  }, [
+    isColorPickerShowing,
+    colorPickerPopperRef,
+    colorPickerPopperButtonRef,
+    isEditingText,
+    isLinkPreviewInputShowing,
+    linkPreviewInputPopperRef,
+    linkPreviewInputPopperButtonRef,
+    isEditingTextButtonRef,
+  ]);
 
   const sliderColorNumber = getRGBANumber(sliderValue);
 
@@ -523,6 +543,7 @@ export function TextStoryCreator({
                   'StoryCreator__control--text': true,
                   'StoryCreator__control--selected': isEditingText,
                 })}
+                ref={setIsEditingTextButtonRef}
                 onClick={() => {
                   setIsEditingText(!isEditingText);
                 }}
